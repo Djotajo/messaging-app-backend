@@ -74,4 +74,4 @@ postRouter.delete(
   }
 );
 
-module.exports = postRouter;
+export default postRouter;

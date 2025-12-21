@@ -1,4 +1,4 @@
-const prisma = require("./prisma");
+import prisma from "./prisma.js";
 
 async function postNewUser(username, hashedPassword) {
   try {
@@ -56,6 +56,20 @@ async function getChatsByUser(userId) {
   }
 }
 
+async function getChatById(chatId) {
+  try {
+    const chat = await prisma.chat.findFirst({
+      where: {
+        id: chatId,
+      },
+    });
+    return chat;
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  }
+}
+
 async function postNewChat(user1Id, user2Id) {
   try {
     const chat = await prisma.chat.create({
@@ -97,11 +111,12 @@ async function postUpdateUser(userId, about, picture) {
   }
 }
 
-module.exports = {
+export default {
   postNewUser,
   getAllUsers,
   getChatByUsers,
   getChatsByUser,
+  getChatById,
   postNewChat,
   postNewMessage,
   postUpdateUser,

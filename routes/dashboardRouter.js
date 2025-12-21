@@ -174,4 +174,4 @@ dashboardRouter.delete(
   }
 );
 
-module.exports = dashboardRouter;
+export default dashboardRouter;

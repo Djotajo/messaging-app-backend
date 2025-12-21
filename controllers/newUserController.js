@@ -1,7 +1,7 @@
-const db = require("../db/queries");
-const bcrypt = require("bcryptjs");
-const { body, validationResult } = require("express-validator");
-const { Prisma } = require("@prisma/client");
+import db from "../db/queries.js";
+import bcrypt from "bcryptjs";
+import { body, validationResult } from "express-validator";
+import prisma from "../db/prisma.js";
 
 const alphaErr = "must only contain letters.";
 const lengthErr = "must be between 1 and 10 characters.";
@@ -16,7 +16,7 @@ const validateUser = [
     .isLength({ min: 1, max: 10 })
     .withMessage("Username must be between 1 and 10 characters"),
 
-  body("password").custom((value, { req }) => {
+  body("password").custom((value) => {
     if (value.length < 8) {
       throw new Error("Password must be at least 8 characters long");
     }
@@ -32,7 +32,7 @@ const validateUser = [
     .matches(/[0-9]/)
     .withMessage("Password must include at least 1 number"),
   body("password")
-    .matches(/[!@#$%^&*(),.?\":{}|<>]/)
+    .matches(/[!@#$%^&*(),.?":{}|<>]/)
     .withMessage("Password must include at least 1 symbol"),
 
   body("confirmPassword").custom((value, { req }) => {
@@ -43,7 +43,7 @@ const validateUser = [
   }),
 ];
 
-exports.newUserCreate = [
+const newUserCreate = [
   validateUser,
   async (req, res) => {
     const errors = validationResult(req);
@@ -58,12 +58,13 @@ exports.newUserCreate = [
         })),
       });
     }
+
     try {
       const { username, password } = req.body;
-
       const hashedPassword = await bcrypt.hash(password, 10);
 
       await db.postNewUser(username, hashedPassword);
+
       return res.status(201).json({
         message: "User created",
       });
@@ -86,3 +87,7 @@ exports.newUserCreate = [
     }
   },
 ];
+
+export default {
+  newUserCreate,
+};

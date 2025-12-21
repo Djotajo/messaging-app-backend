@@ -12,3 +12,5 @@ const chat = await prisma.chat.upsert({
     user2Id,
   },
 });
+
+async function getChatByUsers(user1Id, user2Id) {}

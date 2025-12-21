@@ -1,33 +1,46 @@
-const express = require("express");
-const path = require("node:path");
+import express from "express";
+import path from "node:path";
+
+import http from "node:http";
+
+import cors from "cors";
+import bodyParser from "body-parser";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import passport from "passport";
+import { neon } from "@neondatabase/serverless";
+
+import prisma from "./db/prisma.js";
+
+import "dotenv/config";
+
+import db from "./db/queries.js";
+import jwtStrategy from "./strategies/jwt.js";
+import postRouter from "./routes/postRouter.js";
+import dashboardRouter from "./routes/dashboardRouter.js";
+import newUserController from "./controllers/newUserController.js";
+
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+passport.use(jwtStrategy);
 
 const app = express();
-require("dotenv").config();
-
-const http = require("http");
-const db = require("./db/queries");
-const { neon } = require("@neondatabase/serverless");
-const bcrypt = require("bcryptjs");
-const assetsPath = path.join(__dirname, "public");
 const PORT = process.env.PORT || 3000;
 
-const cors = require("cors");
+app.use(passport.initialize());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-const bodyParser = require("body-parser");
-const jwt = require("jsonwebtoken");
-const passport = require("passport");
-const jwtStrategry = require("./strategies/jwt");
-passport.use(jwtStrategry);
+const assetsPath = path.join(__dirname, "public");
 
 app.use(passport.initialize());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-const postRouter = require("./routes/postRouter");
-const dashboardRouter = require("./routes/dashboardRouter");
-
-const newUserController = require("./controllers/newUserController");
 
 app.use(express.static(path.join(__dirname, "public")));
 

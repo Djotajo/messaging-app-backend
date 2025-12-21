@@ -1,10 +1,11 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client" // or `prisma-client-js`
+  output          = "../generated/prisma"
+  engineType      = "client" // enable Prisma ORM without Rust
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // model Session {
@@ -24,6 +25,7 @@ model User {
   
   chatsAsUser1 Chat[] @relation("User1Chats")
   chatsAsUser2 Chat[] @relation("User2Chats")
+  messages     Message[] 
 
 }
 
